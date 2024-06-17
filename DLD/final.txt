@@ -1,0 +1,45 @@
+Note:
+In the below topics, focus only on whatever I have covered in the class. First, study all the concepts by referring to classroom discussions, then orient your preparation by referring to the assignment and class exam question papers. This is more than sufficient to score high marks in the exam. 
+Don't complicate it; keep it as simple as possible with high conceptual clarity. 
+This is a very simple course; don't miss out on the opportunity to score high.
+
+Syllabus:
+Module 1: Number Systems and Codes
+- Representation 
+-Operation: Addition, Subtraction, Multiplication. 
+-Conversion
+-Complement
+-Sign Representation 
+- Classification of Codes - Conversion, operation. 
+(BCD code, Excess-3 code, Gray code, Hamming code)
+
+Module 2: Boolean Algebra
+-Theorems, Axioms, Laws
+-SOP, POS, SSOP, SPOS: Minterms, Maxterms. 
+-K -map (Implicant, Prime Implicant, Essential PI)
+-Quine McCluskey Method
+
+Module 3: Logic Gates
+-Basic Gates
+-Universal Gates
+-Special Gates
+
+Module 4: Combinational Logic
+-Adder: Half Adder, Full Adder
+-Subtractor: Half Subtractor, Full Subtractor
+-n-bit Parallel Adder/Subtractor
+-Comparators (1-bit & 2-bit Magnitude Comparator)
+-Encoders (Decimal to BCD Encoder, Priority Encoder)
+-Decoders
+-Parity Generators
+-Multiplexers and Demultiplexers 
+
+Module 5: Sequential Logic 
+- Synchronous Sequential logic & Asynchronous Sequential logic
+- Clock & triggering 
+- Flip flops (SR latch, SR FF, JK FF, Master-Slave JK FF,  DFF, TFF)
+- FF Conversion 
+- Registers (SISO, SIPO, PISO, PIPO, Universal shift register)
+- Design procedure of Sequential logic
+- Sequence detector
+- Counters

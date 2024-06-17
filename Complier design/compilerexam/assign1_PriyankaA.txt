@@ -1,0 +1,223 @@
+PRIYANKA A
+220200039
+SCDS 
+SEMESTER FOUR
+COMPILER DESIGN 
+ASSIGNMENT 1
+____________________________________________________________________________________________________________________________________________
+
+
+
+Expressions and Tokens
+
+Expression 1: - 2 * 3 + 4
+Tokens: MINUS, NUMBER(2), STAR, NUMBER(3), PLUS, NUMBER(4)
+
+Expression 2: - (2 * 3 + 4)
+Tokens: MINUS, LEFT_PAREN, NUMBER(2), STAR, NUMBER(3), PLUS, NUMBER(4), RIGHT_PAREN
+
+Expression 3: 2 + 3 * 4 + 5 * 2
+Tokens: NUMBER(2), PLUS, NUMBER(3), STAR, NUMBER(4), PLUS, NUMBER(5), STAR, NUMBER(2)
+
+____________________________________________________________________________________________________________________________________________
+
+
+
+Call Trees
+
+
+Expression 1: - 2 * 3 + 4
+
+-   advance() - prev = null, curr = MINUS
+-   expression() - prev = null, curr = MINUS
+|
+-   parsePrecedence(PREC_ASSIGNMENT) - prev = null, curr = MINUS
+    |
+    -   getRule() - prev = null, curr = MINUS
+    |         (prefix field of rule is "unary")
+    -   unary() - prev = MINUS, curr = NUMBER(2)
+    |   | 
+    |   -   parsePrecedence(PREC_UNARY) - prev = MINUS, curr = NUMBER(2)
+    |       |
+    |       -   advance() - prev = MINUS, curr = NUMBER(2)
+    |       -   getRule() - prev = NUMBER(2), curr = STAR
+    |               (prefix field of rule is "number")
+    |       -   number() - prev = NUMBER(2), curr = STAR
+    |       -   getRule(STAR) - precedence field of rule is PREC_FACTOR
+    |            exit while loop because PREC_UNARY > PREC_FACTOR
+    |
+    -   getRule(STAR) - precedence field of rule is PREC_FACTOR
+    |         (PREC_ASSIGNMENT <= PREC_FACTOR, so continue with loop)
+    -   advance() - prev = NUMBER(2), curr = STAR
+    -   getRule(STAR) - infix field of rule is "binary"
+    -   binary() - prev = STAR, curr = NUMBER(3)
+    |   |
+    |   -   getRule(STAR) - precedence field of rule is PREC_FACTOR
+    |   -   parsePrecedence(PREC_FACTOR + 1) - prev = STAR, curr = NUMBER(3)
+    |       |
+    |       -   advance() - prev = STAR, curr = NUMBER(3)
+    |       -   getRule() - prev = NUMBER(3), curr = PLUS
+    |               (prefix field of rule is "number")
+    |       -   number() - prev = NUMBER(3), curr = PLUS
+    |       -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |            exit while loop because PREC_FACTOR + 1 > PREC_TERM
+    |
+    -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |         (PREC_ASSIGNMENT <= PREC_TERM, so continue with loop)
+    -   advance() - prev = NUMBER(3), curr = PLUS
+    -   getRule(PLUS) - infix field of rule is "binary"
+    -   binary() - prev = PLUS, curr = NUMBER(4)
+    |   |
+    |   -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |   -   parsePrecedence(PREC_TERM + 1) - prev = PLUS, curr = NUMBER(4)
+    |       |
+    |       -   advance() - prev = PLUS, curr = NUMBER(4)
+    |       -   getRule() - prev = NUMBER(4), curr = EOF
+    |               (prefix field of rule is "number")
+    |       -   number() - prev = NUMBER(4), curr = EOF
+    |       -   getRule(EOF) - precedence field of rule is PREC_NONE
+    |            exit while loop because PREC_TERM + 1 > PREC_NONE
+    -   getRule(EOF) - precedence field of rule is PREC_NONE
+         exit while loop because PREC_ASSIGNMENT > PREC_NONE
+
+
+
+Expression 2: - (2 * 3 + 4)
+
+-   advance() - prev = null, curr = MINUS
+-   expression() - prev = null, curr = MINUS
+|
+-   parsePrecedence(PREC_ASSIGNMENT) - prev = null, curr = MINUS
+    |
+    -   getRule() - prev = null, curr = MINUS
+    |         (prefix field of rule is "unary")
+    -   unary() - prev = MINUS, curr = LEFT_PAREN
+    |   | 
+    |   -   parsePrecedence(PREC_UNARY) - prev = MINUS, curr = LEFT_PAREN
+    |       |
+    |       -   getRule() - prev = MINUS, curr = LEFT_PAREN
+    |               (prefix field of rule is "grouping")
+    |       -   grouping() - prev = MINUS, curr = LEFT_PAREN
+    |       |   | 
+    |       |   -   advance() - prev = MINUS, curr = LEFT_PAREN
+    |       |   -   expression() - prev = LEFT_PAREN, curr = NUMBER(2)
+    |       |   |
+    |       |   -   parsePrecedence(PREC_ASSIGNMENT) - prev = LEFT_PAREN, curr = NUMBER(2)
+    |       |       |
+    |       |       -   getRule() - prev = LEFT_PAREN, curr = NUMBER(2)
+    |       |       |         (prefix field of rule is "number")
+    |       |       -   number() - prev = NUMBER(2), curr = STAR
+    |       |       -   getRule(STAR) - precedence field of rule is PREC_FACTOR
+    |       |       |         (PREC_ASSIGNMENT <= PREC_FACTOR, so continue with loop)
+    |       |       -   advance() - prev = NUMBER(2), curr = STAR
+    |       |       -   getRule(STAR) - infix field of rule is "binary"
+    |       |       -   binary() - prev = STAR, curr = NUMBER(3)
+    |       |       |   |
+    |       |       |   -   getRule(STAR) - precedence field of rule is PREC_FACTOR
+    |       |       |   -   parsePrecedence(PREC_FACTOR + 1) - prev = STAR, curr = NUMBER(3)
+    |       |       |       |
+    |       |       |       -   advance() - prev = STAR, curr = NUMBER(3)
+    |       |       |       -   getRule() - prev = NUMBER(3), curr = PLUS
+    |       |       |               (prefix field of rule is "number")
+    |       |       |       -   number() - prev = NUMBER(3), curr = PLUS
+    |       |       |       -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |       |       |            exit while loop because PREC_FACTOR + 1 > PREC_TERM
+    |       |       -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |       |       |         (PREC_ASSIGNMENT <= PREC_TERM, so continue with loop)
+    |       |       -   advance() - prev = NUMBER(3), curr = PLUS
+    |       |       -   getRule(PLUS) - infix field of rule is "binary"
+    |       |       -   binary() - prev = PLUS, curr = NUMBER(4)
+    |       |       |   |
+    |       |       |   -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |       |       |   -   parsePrecedence(PREC_TERM + 1) - prev = PLUS, curr = NUMBER(4)
+    |       |       |       |
+    |       |       |       -   advance() - prev = PLUS, curr = NUMBER(4)
+    |       |       |       -   getRule() - prev = NUMBER(4), curr = RIGHT_PAREN
+    |       |       |               (prefix field of rule is "number")
+    |       |       |       -   number() - prev = NUMBER(4), curr = RIGHT_PAREN
+    |       |       |       -   getRule(RIGHT_PAREN) - precedence field of rule is PREC_NONE
+    |       |       |            exit while loop because PREC_TERM + 1 > PREC_NONE
+    |       |       -   getRule(RIGHT_PAREN) - precedence field of rule is PREC_NONE
+    |       |            exit while loop because PREC_ASSIGNMENT > PREC_NONE
+    |       -   advance() - prev = NUMBER(4), curr = RIGHT_PAREN
+    |       -   getRule() - prev = NUMBER(4), curr = EOF
+    |             (prefix field of rule is "number")
+    |       -   number() - prev = NUMBER(4), curr = EOF
+    |       -   getRule(EOF) - precedence field of rule is PREC_NONE
+    |            exit while loop because PREC_ASSIGNMENT > PREC_NONE
+
+
+
+Expression 3: 2 + 3 * 4 + 5 * 2
+
+-   advance() - prev = null, curr = NUMBER(2)
+-   expression() - prev = null, curr = NUMBER(2)
+|
+-   parsePrecedence(PREC_ASSIGNMENT) - prev = null, curr = NUMBER(2)
+    |
+    -   getRule() - prev = null, curr = NUMBER(2)
+    |         (prefix field of rule is "number")
+    -   number() - prev = NUMBER(2), curr = PLUS
+    -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |         (PREC_ASSIGNMENT <= PREC_TERM, so continue with loop)
+    -   advance() - prev = NUMBER(2), curr = PLUS
+    -   getRule(PLUS) - infix field of rule is "binary"
+    -   binary() - prev = PLUS, curr = NUMBER(3)
+    |   |
+    |   -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |   -   parsePrecedence(PREC_TERM + 1) - prev = PLUS, curr = NUMBER(3)
+    |       |
+    |       -   advance() - prev = PLUS, curr = NUMBER(3)
+    |       -   getRule() - prev = NUMBER(3), curr = STAR
+    |       |         (prefix field of rule is "number")
+    |       -   number() - prev = NUMBER(3), curr = STAR
+    |       -   getRule(STAR) - precedence field of rule is PREC_FACTOR
+    |       |         (PREC_TERM + 1 <= PREC_FACTOR, so continue with loop)
+    |       -   advance() - prev = NUMBER(3), curr = STAR
+    |       -   getRule(STAR) - infix field of rule is "binary"
+    |       -   binary() - prev = STAR, curr = NUMBER(4)
+    |       |   |
+    |       |   -   getRule(STAR) - precedence field of rule is PREC_FACTOR
+    |       |   -   parsePrecedence(PREC_FACTOR + 1) - prev = STAR, curr = NUMBER(4)
+    |       |       |
+    |       |       -   advance() - prev = STAR, curr = NUMBER(4)
+    |       |       -   getRule() - prev = NUMBER(4), curr = PLUS
+    |       |       |         (prefix field of rule is "number")
+    |       |       -   number() - prev = NUMBER(4), curr = PLUS
+    |       |       -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |       |            exit while loop because PREC_FACTOR + 1 > PREC_TERM
+    |       -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |            exit while loop because PREC_TERM + 1 > PREC_TERM
+    |
+    -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |         (PREC_ASSIGNMENT <= PREC_TERM, so continue with loop)
+    -   advance() - prev = NUMBER(4), curr = PLUS
+    -   getRule(PLUS) - infix field of rule is "binary"
+    -   binary() - prev = PLUS, curr = NUMBER(5)
+    |   |
+    |   -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |   -   parsePrecedence(PREC_TERM + 1) - prev = PLUS, curr = NUMBER(5)
+    |       |
+    |       -   advance() - prev = PLUS, curr = NUMBER(5)
+    |       -   getRule() - prev = NUMBER(5), curr = STAR
+    |       |         (prefix field of rule is "number")
+    |       -   number() - prev = NUMBER(5), curr = STAR
+    |       -   getRule(STAR) - precedence field of rule is PREC_FACTOR
+    |       |         (PREC_TERM + 1 <= PREC_FACTOR, so continue with loop)
+    |       -   advance() - prev = NUMBER(5), curr = STAR
+    |       -   getRule(STAR) - infix field of rule is "binary"
+    |       -   binary() - prev = STAR, curr = NUMBER(2)
+    |       |   |
+    |       |   -   getRule(STAR) - precedence field of rule is PREC_FACTOR
+    |       |   -   parsePrecedence(PREC_FACTOR + 1) - prev = STAR, curr = NUMBER(2)
+    |       |       |
+    |       |       -   advance() - prev = STAR, curr = NUMBER(2)
+    |       |       -   getRule() - prev = NUMBER(2), curr = EOF
+    |       |       |         (prefix field of rule is "number")
+    |       |       -   number() - prev = NUMBER(2), curr = EOF
+    |       |       -   getRule(EOF) - precedence field of rule is PREC_NONE
+    |       |            exit while loop because PREC_FACTOR + 1 > PREC_NONE
+    |       -   getRule(EOF) - precedence field of rule is PREC_NONE
+    |            exit while loop because PREC_TERM + 1 > PREC_NONE
+    -   getRule(EOF
+

@@ -1,0 +1,181 @@
+- 2 * 3 + 4 
+- (2 * 3 + 4)
+2 + 3 * 4 + 5 * 2
+
+Given above Lox expression. what is its value. 
+What are the tokens and lexemes? When you start the parser on these inputs,
+write the call tree (specifying the arguments of each function in the tree, 
+and also the values of parser.previous and parser.current each time a call
+is made), involving the following functions: 
+
+advance()
+expression()
+parsePrecedence()
+getRule()
+binary()
+literal()
+grouping()
+number()
+string()
+unary().
+
+When you write the tokens, 
+you can simplify and just write MINUS, PLUS etc. instead of TOKEN_MINUS, 
+TOKEN_PLUS etc. Similarly you can say prev and curr instead of 
+parser.previous and parser.current.
+
+For example, for the expression -2 + 2, the tokens generated (with lexemes 
+written in parentheses where it is relevant). 
+MINUS, NUMBER (2), PLUS, NUMBER (2)
+
+And the call tree can be written as follows (with each nested call indicated 
+by an indentation and a hyphen, and multiple calls from a function displayed 
+on multiple lines, one after the other):
+
+-   advance() - prev = ??, curr = ?? 
+-   expression() - prev = ??, curr = MINUS
+|
+-   parsePrecedence(PREC_ASSIGNMENT) - prev =??, curr = MINUS
+    |
+    -   advance() - prev = ??, curr = MINUS
+    -   getRule() - prev = MINUS, curr = NUMBER
+    |         (prefix field of rule is "unary")
+    -   unary() - prev = MINUS, curr = NUMBER
+    |   | 
+    |   _   parsePrecedence(PREC_UNARY) - prev = MINUS, curr = NUMBER
+    |       |
+    |       -   advance() - prev = MINUS, curr = NUMBER
+    |       -   getRule() - prev = NUMBER, curr = PLUS
+    |       |         (prefix field of rule is "number")
+    |       -   number() - prev = NUMBER, curr = PLUS
+    |       -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |            exit while loop because PREC_UNARY > PREC_TERM
+    |
+    -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |         (PREC_ASSIGNMENT <= PREC_TERM, so continue with loop)
+    -   advance() - prev = NUMBER, curr = PLUS
+    |        (when the call returns, prev = PLUS, curr = NUMBER)
+    -   getRule(PLUS) - infix field of rule is "binary"
+    -   binary() - prev = PLUS, curr = NUMBER
+    |   |
+    |   -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |   -   parsePrecedence(PREC_TERM + 1) - prev = PLUS, curr = NUMBER
+    |       |
+    |       -   advance() - prev = PLUS, curr = NUMBER
+    |       -   getRule() - prev = NUMBER, curr = EOF
+    |               (prefix field of rule is "number")
+    |       -   number()  - prev = NUMBER, curr = EOF
+    |       -   getRule(EOF) - precedence field of rule is PREC_NONE.
+    |            exit while loop because PREC_TERM + 1 > PREC_NONE
+    -   getRule(EOF) - precedence field of rule is PREC_NONE.
+                 exit while loop because PREC_ASSIGNMENT > PREC_NONE
+----------------------------------
+
+
+
+
+
+
+
+### Value of the Expression
+The given Lox expression is `--((225 + 32 / (8 / 4)) * (3 + 4))`.
+
+1. Evaluate the innermost parentheses:
+   - \( 8 / 4 = 2 \)
+   - \( 32 / 2 = 16 \)
+   - \( 225 + 16 = 241 \)
+   - \( 3 + 4 = 7 \)
+2. Combine the results:
+   - \( 241 * 7 = 1687 \)
+3. Apply unary minus:
+   - \(-1687\)
+   - \(-(-1687) = 1687\)
+
+**Value of the expression:** `1687`
+
+### Tokens and Lexemes
+- MINUS
+- MINUS
+- LEFT_PAREN
+- LEFT_PAREN
+- NUMBER (225)
+- PLUS
+- NUMBER (32)
+- SLASH
+- LEFT_PAREN
+- NUMBER (8)
+- SLASH
+- NUMBER (4)
+- RIGHT_PAREN
+- RIGHT_PAREN
+- STAR
+- LEFT_PAREN
+- NUMBER (3)
+- PLUS
+- NUMBER (4)
+- RIGHT_PAREN
+- RIGHT_PAREN
+
+### Call Tree
+```
+- advance() - prev = ??, curr = MINUS
+- expression() - prev = ??, curr = MINUS
+  - parsePrecedence(PREC_ASSIGNMENT) - prev = ??, curr = MINUS
+    - advance() - prev = ??, curr = MINUS
+    - getRule() - prev = MINUS, curr = MINUS
+      (prefix field of rule is "unary")
+    - unary() - prev = MINUS, curr = MINUS
+      - parsePrecedence(PREC_UNARY) - prev = MINUS, curr = LEFT_PAREN
+        - advance() - prev = MINUS, curr = LEFT_PAREN
+        - getRule() - prev = MINUS, curr = LEFT_PAREN
+          (prefix field of rule is "grouping")
+        - grouping() - prev = LEFT_PAREN, curr = LEFT_PAREN
+          - advance() - prev = LEFT_PAREN, curr = NUMBER
+          - expression() - prev = LEFT_PAREN, curr = NUMBER
+            - parsePrecedence(PREC_ASSIGNMENT) - prev = LEFT_PAREN, curr = NUMBER
+              - advance() - prev = LEFT_PAREN, curr = PLUS
+              - getRule() - prev = NUMBER, curr = PLUS
+                (infix field of rule is "binary")
+              - binary() - prev = NUMBER, curr = PLUS
+                - parsePrecedence(PREC_TERM + 1) - prev = PLUS, curr = NUMBER
+                  - advance() - prev = PLUS, curr = SLASH
+                  - getRule() - prev = NUMBER, curr = SLASH
+                    (infix field of rule is "binary")
+                  - binary() - prev = NUMBER, curr = SLASH
+                    - parsePrecedence(PREC_TERM + 1) - prev = SLASH, curr = LEFT_PAREN
+                      - advance() - prev = SLASH, curr = LEFT_PAREN
+                      - getRule() - prev = SLASH, curr = LEFT_PAREN
+                        (prefix field of rule is "grouping")
+                      - grouping() - prev = LEFT_PAREN, curr = NUMBER
+                        - advance() - prev = LEFT_PAREN, curr = NUMBER
+                        - expression() - prev = LEFT_PAREN, curr = NUMBER
+                          - parsePrecedence(PREC_ASSIGNMENT) - prev = LEFT_PAREN, curr = NUMBER
+                            - advance() - prev = LEFT_PAREN, curr = SLASH
+                            - getRule() - prev = NUMBER, curr = SLASH
+                              (infix field of rule is "binary")
+                            - binary() - prev = NUMBER, curr = SLASH
+                              - parsePrecedence(PREC_TERM + 1) - prev = SLASH, curr = NUMBER
+                                - advance() - prev = SLASH, curr = RIGHT_PAREN
+                                - getRule() - prev = NUMBER, curr = RIGHT_PAREN
+                                  (prefix field of rule is "grouping")
+                                - grouping() - prev = NUMBER, curr = STAR
+                                  - advance() - prev = RIGHT_PAREN, curr = LEFT_PAREN
+                                  - getRule() - prev = STAR, curr = LEFT_PAREN
+                                    (prefix field of rule is "grouping")
+                                  - grouping() - prev = LEFT_PAREN, curr = NUMBER
+                                    - advance() - prev = LEFT_PAREN, curr = NUMBER
+                                    - expression() - prev = LEFT_PAREN, curr = NUMBER
+                                      - parsePrecedence(PREC_ASSIGNMENT) - prev = LEFT_PAREN, curr = NUMBER
+                                        - advance() - prev = LEFT_PAREN, curr = PLUS
+                                        - getRule() - prev = NUMBER, curr = PLUS
+                                          (infix field of rule is "binary")
+                                        - binary() - prev = NUMBER, curr = PLUS
+                                          - parsePrecedence(PREC_TERM + 1) - prev = PLUS, curr = NUMBER
+                                            - advance() - prev = PLUS, curr = RIGHT_PAREN
+                                            - getRule() - prev = NUMBER, curr = RIGHT_PAREN
+                                              (prefix field of rule is "grouping")
+                                            - grouping() - prev = NUMBER, curr = RIGHT_PAREN
+                                            - advance() - prev = RIGHT_PAREN, curr = RIGHT_PAREN
+- getRule() - precedence field of rule is PREC_NONE
+  exit while loop because PREC_ASSIGNMENT > PREC_NONE
+```

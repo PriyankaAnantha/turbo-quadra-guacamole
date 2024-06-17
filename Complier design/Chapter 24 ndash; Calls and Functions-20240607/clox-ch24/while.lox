@@ -1,0 +1,9 @@
+var x = 0;
+var y = 1;
+while (x < 100) {
+    var t = x; 
+    x = y;
+    y = t + y;
+}
+print x;
+print y;

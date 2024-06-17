@@ -1,0 +1,217 @@
+PRIYANKA A
+220200039
+SCDS 
+SEMESTER FOUR
+COMPILER DESIGN 
+ASSIGNMENT 2
+____________________________________________________________________________________________________________________________________________
+
+1. 
+
+We know that the array grows in size by doubling its capacity each time it runs out of space. 
+This means that every time the array needs more space, all existing elements are copied to the new, larger array.
+
+Let's consider the given sequence of numbers: 1, 4, 9, 16, ..., 10000.
+
+Doubling Growth and Copying:
+Initial Capacity: Let's assume the initial capacity of the array is 1.
+Insertions: We will insert numbers one by one and double the array capacity whenever it's full.
+
+For an element at position 'n':
+
+- If 'n' is a power of 2 (e.g., 1, 2, 4, 8, ...), the array doubles, and all previous elements are copied to the new array.
+
+Here's a breakdown of how many times each element is copied:
+
+- Element 1: Copied when capacity changes from 1 to 2, 2 to 4, 4 to 8, ..., up to the capacity required to fit 10000.
+- Element 4: Copied when capacity changes from 2 to 4, 4 to 8, ..., up to the required capacity.
+- Element 9: Copied when capacity changes from 4 to 8, 8 to 16, ..., up to the required capacity.
+- And so on...
+
+Since the capacity doubles each time, an element at position 'n' will be copied (log_2(n)) times. For the largest element (10000):
+
+- ( 10000 = 2^{13.2877} ) approximately. So, the element 10000 is copied about 13 times.
+
+In essence: 
+
+- Element 1: Copied \( \log_2(10000)  pprox 13 \) times.
+- Element 4: Copied \( \log_2(10000/2)  pprox 12 \) times.
+- Element 9: Copied \( \log_2(10000/3)  pprox 11 \) times.
+- And so forth...
+
+____________________________________________________________________________________________________________________________________________
+
+2. Bytecode and Stack Evolution
+
+Expression: `2 * (3 + 5 / 2)`
+
+Bytecode:
+
+    OP_CONST 2
+    OP_CONST 3
+    OP_CONST 5
+    OP_CONST 2
+    OP_DIV
+    OP_ADD
+    OP_MUL
+
+
+Stack Evolution:
+
+    []
+    [2]
+    [2, 3]
+    [2, 3, 5]
+    [2, 3, 5, 2]
+    [2, 3, 2.5]
+    [2, 5.5]
+    [11]
+
+
+Expression: `8 / 4 / 2`
+
+Bytecode:
+
+    OP_CONST 8
+    OP_CONST 4
+    OP_DIV
+    OP_CONST 2
+    OP_DIV
+    
+
+Stack Evolution:
+
+    []
+    [8]
+    [8, 4]
+    [2]
+    [2, 2]
+    [1]
+    
+
+Expression: `8 / (4 / 2)`
+
+Bytecode:
+
+    OP_CONST 8
+    OP_CONST 4
+    OP_CONST 2
+    OP_DIV
+    OP_DIV
+    ```
+
+Stack Evolution:
+   
+    []
+    [8]
+    [8, 4]
+    [8, 4, 2]
+    [8, 2]
+    [4]
+    
+
+Expression: `- (2 + 3 * (5 + 6 * (7 - 32)))`
+
+Bytecode:
+    
+    OP_CONST 2
+    OP_CONST 3
+    OP_CONST 5
+    OP_CONST 6
+    OP_CONST 7
+    OP_CONST 32
+    OP_SUB
+    OP_MUL
+    OP_ADD
+    OP_MUL
+    OP_ADD
+    OP_NEGATE
+    
+
+Stack Evolution:
+    
+    []
+    [2]
+    [2, 3]
+    [2, 3, 5]
+    [2, 3, 5, 6]
+    [2, 3, 5, 6, 7]
+    [2, 3, 5, 6, -25]
+    [2, 3, 5, -150]
+    [2, 3, -145]
+    [2, -435]
+    [-433]
+    [433]
+   
+
+
+
+   ____________________________________________________________________________________________________________________________________________To analyze the changes in the capacity field and the total cost of inserting 1000 elements into a dynamic array, we need to recall the behavior of a dynamic array's resizing strategy.
+
+### Dynamic Array Behavior
+
+A dynamic array typically starts with an initial capacity (let's assume it's 1 for simplicity). When the array is full and a new element needs to be inserted, the array's capacity is doubled. This means:
+
+1. Start with an initial capacity.
+2. When the array is full, double its capacity.
+3. Continue this process as more elements are inserted.
+
+### Capacity Changes
+
+Let's outline the capacity changes as elements are inserted:
+
+1. Start with capacity = 1.
+2. Insert elements until the array is full.
+3. When full, double the capacity.
+
+For 1000 elements, the capacity changes will follow this sequence:
+
+- Insert element 1: capacity = 1 (initial capacity).
+- Insert element 2: array is full, so double capacity to 2.
+- Insert elements 3 and 4: array is full, so double capacity to 4.
+- Insert elements 5 to 8: array is full, so double capacity to 8.
+- Insert elements 9 to 16: array is full, so double capacity to 16.
+- Insert elements 17 to 32: array is full, so double capacity to 32.
+- Insert elements 33 to 64: array is full, so double capacity to 64.
+- Insert elements 65 to 128: array is full, so double capacity to 128.
+- Insert elements 129 to 256: array is full, so double capacity to 256.
+- Insert elements 257 to 512: array is full, so double capacity to 512.
+- Insert elements 513 to 1024: array is full, so double capacity to 1024.
+
+We stop here because the array now has a capacity of 1024, which is enough to hold all 1000 elements.
+
+### Total Cost Calculation
+
+The total cost of inserting 1000 elements includes both the cost of writing new values into the array and the cost of copying existing values when resizing. 
+
+1. **Cost of writing new values**: This is straightforward—each of the 1000 elements costs 1 rupee to write into the array.
+   - Total cost for writing = 1000 rupees.
+
+2. **Cost of copying elements during resizing**: Each time the array is resized, all current elements must be copied to the new array. We need to calculate the cost of these copies.
+
+Let's break down the cost of copying:
+
+- Resize from 1 to 2: Copy 1 element.
+- Resize from 2 to 4: Copy 2 elements.
+- Resize from 4 to 8: Copy 4 elements.
+- Resize from 8 to 16: Copy 8 elements.
+- Resize from 16 to 32: Copy 16 elements.
+- Resize from 32 to 64: Copy 32 elements.
+- Resize from 64 to 128: Copy 64 elements.
+- Resize from 128 to 256: Copy 128 elements.
+- Resize from 256 to 512: Copy 256 elements.
+- Resize from 512 to 1024: Copy 512 elements.
+
+Summing these up, the total cost of copying is:
+\[ 1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256 + 512 = 1023 \]
+
+### Total Cost
+
+Combining both costs:
+
+- Cost of writing new values: 1000 rupees
+- Cost of copying during resizing: 1023 rupees
+
+Total cost = 1000 + 1023 = 2023 rupees
+
+Therefore, the total cost of inserting 1000 elements into a dynamic array is 2023 rupees.

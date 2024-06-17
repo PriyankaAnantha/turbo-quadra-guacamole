@@ -1,0 +1,82 @@
+== first ==
+0000 0002 OP_CONSTANT         0 '1'
+0002 0003 OP_GET_GLOBAL       1 'second'
+0004    | OP_CALL             0
+0006    | OP_POP
+0007 0004 OP_CONSTANT         2 '2'
+0009 0005 OP_GET_GLOBAL       1 'second'
+0011    | OP_CALL             0
+0013    | OP_POP
+0014 0006 OP_NIL
+0015    | OP_RETURN
+== second ==
+0000 0009 OP_CONSTANT         0 '3'
+0002 0010 OP_CONSTANT         1 '4'
+0004 0011 OP_NIL
+0005    | OP_RETURN
+== <script> ==
+0000 0006 OP_CONSTANT         1 '<fn first>'
+0002    | OP_DEFINE_GLOBAL    0 'first'
+0004 0011 OP_CONSTANT         3 '<fn second>'
+0006    | OP_DEFINE_GLOBAL    2 'second'
+0008 0013 OP_GET_GLOBAL       0 'first'
+0010    | OP_CALL             0
+0012    | OP_POP
+0013    | OP_NIL
+0014    | OP_RETURN
+
+
+          [<script>]
+0000 0006 OP_CONSTANT         1 '<fn first>'
+          [<script>][<fn first>]
+0002    | OP_DEFINE_GLOBAL    0 'first'
+          [<script>]
+0004 0011 OP_CONSTANT         3 '<fn second>'
+          [<script>][<fn second>]
+0006    | OP_DEFINE_GLOBAL    2 'second'
+          [<script>]
+0008 0013 OP_GET_GLOBAL       0 'first'
+          [<script>][<fn first>]
+0010    | OP_CALL             0
+          [<script>][<fn first>]
+0000 0002 OP_CONSTANT         0 '1'
+          [<script>][<fn first>][1]
+0002 0003 OP_GET_GLOBAL       1 'second'
+          [<script>][<fn first>][1][<fn second>]
+0004    | OP_CALL             0
+          [<script>][<fn first>][1][<fn second>]
+0000 0009 OP_CONSTANT         0 '3'
+          [<script>][<fn first>][1][<fn second>][3]
+0002 0010 OP_CONSTANT         1 '4'
+          [<script>][<fn first>][1][<fn second>][3][4]
+0004 0011 OP_NIL
+          [<script>][<fn first>][1][<fn second>][3][4][nil]
+0005    | OP_RETURN
+          [<script>][<fn first>][1][nil]
+0006    | OP_POP
+          [<script>][<fn first>][1]
+0007 0004 OP_CONSTANT         2 '2'
+          [<script>][<fn first>][1][2]
+0009 0005 OP_GET_GLOBAL       1 'second'
+          [<script>][<fn first>][1][2][<fn second>]
+0011    | OP_CALL             0
+          [<script>][<fn first>][1][2][<fn second>]
+0000 0009 OP_CONSTANT         0 '3'
+          [<script>][<fn first>][1][2][<fn second>][3]
+0002 0010 OP_CONSTANT         1 '4'
+          [<script>][<fn first>][1][2][<fn second>][3][4]
+0004 0011 OP_NIL
+          [<script>][<fn first>][1][2][<fn second>][3][4][nil]
+0005    | OP_RETURN
+          [<script>][<fn first>][1][2][nil]
+0013    | OP_POP
+          [<script>][<fn first>][1][2]
+0014 0006 OP_NIL
+          [<script>][<fn first>][1][2][nil]
+0015    | OP_RETURN
+          [<script>][nil]
+0012    | OP_POP
+          [<script>]
+0013    | OP_NIL
+          [<script>][nil]
+0014    | OP_RETURN

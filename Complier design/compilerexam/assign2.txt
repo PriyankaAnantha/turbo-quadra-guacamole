@@ -1,0 +1,118 @@
+1. Recall the dynamic array data structure as described in Chapter 14 of the book. Suppose you declare a new array and insert numbers 1, 4, 9, 16, ..., 10000 in order. How many times is each element copied to a new location, as the array grows in size?
+
+2. Consider these expressions:
+    2 * (3 + 5 / 2)
+    8 / 4 / 2
+    8 / (4 / 2)
+    - (2 + 3 * (5 + 6 * (7 - 32)))
+
+Write out the bytecode corresponding to these expressions and show the evolution of the stack as the bytecode is executed by the virtual machine. For writing the bytecode, you can use 
+    OP_CONST <num> 
+instead of
+    OP_CONST <idx into data segment> '<value at idx>'.
+For arithmetic operations, use OP_ADD, OP_SUB, OP_MUL, OP_DIV, OP_NEGATE.
+
+For the stack, just type them as a list of numbers [num1, num2, ... numk] with the bottom of the stack at the leftmost and the top at the rightmost. The empty stack is denoted by [].
+
+For example, for the expression 
+    (1 + 2 * 3) / ((2 + 5) * 4),
+the bytecode is as below. 
+    OP_CONST 1
+    OP_CONST 2
+    OP_CONST 3
+    OP_MUL
+    OP_ADD
+    OP_CONST 2 
+    OP_CONST 5
+    OP_ADD
+    OP_CONST 4
+    OP_MUL
+    OP_DIV
+
+The evolution of the stack is as follows:
+    []
+    [1]
+    [1, 2]
+    [1, 2, 3]
+    [1, 6]
+    [7]
+    [7, 2]
+    [7, 2, 5]
+    [7, 7]
+    [7, 7, 4]
+    [7, 28]
+    [0.25]
+
+
+refer crafting interpreters: Recall the dynamic array data structure as described in Chapter 14 of the book. Suppose 1000 elements are inserted in the arry. what are teh changes in the value of the capacity field? if writing a value in an array costs 1 rupee, and each copu of a value into a new location costs 1 rupee what is the total cost of inserting 1000 elements into a dynamic array?
+
+
+it is two minus in the beginning: consider the lox expression --((225 + 32 / (8/4)) *(3+4)) 
+Given above Lox expression. what is its value. 
+What are the tokens and lexemes? When you start the parser on these inputs,
+write the call tree (specifying the arguments of each function in the tree, 
+and also the values of parser.previous and parser.current each time a call
+is made), involving the following functions: 
+
+advance()
+expression()
+parsePrecedence()
+getRule()
+binary()
+literal()
+grouping()
+number()
+string()
+unary().
+
+When you write the tokens, 
+you can simplify and just write MINUS, PLUS etc. instead of TOKEN_MINUS, 
+TOKEN_PLUS etc. Similarly you can say prev and curr instead of 
+parser.previous and parser.current.
+
+For example, for the expression -2 + 2, the tokens generated (with lexemes 
+written in parentheses where it is relevant). 
+MINUS, NUMBER (2), PLUS, NUMBER (2)
+
+And the call tree can be written as follows (with each nested call indicated 
+by an indentation and a hyphen, and multiple calls from a function displayed 
+on multiple lines, one after the other):
+
+-   advance() - prev = ??, curr = ?? 
+-   expression() - prev = ??, curr = MINUS
+|
+-   parsePrecedence(PREC_ASSIGNMENT) - prev =??, curr = MINUS
+    |
+    -   advance() - prev = ??, curr = MINUS
+    -   getRule() - prev = MINUS, curr = NUMBER
+    |         (prefix field of rule is "unary")
+    -   unary() - prev = MINUS, curr = NUMBER
+    |   | 
+    |   _   parsePrecedence(PREC_UNARY) - prev = MINUS, curr = NUMBER
+    |       |
+    |       -   advance() - prev = MINUS, curr = NUMBER
+    |       -   getRule() - prev = NUMBER, curr = PLUS
+    |       |         (prefix field of rule is "number")
+    |       -   number() - prev = NUMBER, curr = PLUS
+    |       -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |            exit while loop because PREC_UNARY > PREC_TERM
+    |
+    -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |         (PREC_ASSIGNMENT <= PREC_TERM, so continue with loop)
+    -   advance() - prev = NUMBER, curr = PLUS
+    |        (when the call returns, prev = PLUS, curr = NUMBER)
+    -   getRule(PLUS) - infix field of rule is "binary"
+    -   binary() - prev = PLUS, curr = NUMBER
+    |   |
+    |   -   getRule(PLUS) - precedence field of rule is PREC_TERM
+    |   -   parsePrecedence(PREC_TERM + 1) - prev = PLUS, curr = NUMBER
+    |       |
+    |       -   advance() - prev = PLUS, curr = NUMBER
+    |       -   getRule() - prev = NUMBER, curr = EOF
+    |               (prefix field of rule is "number")
+    |       -   number()  - prev = NUMBER, curr = EOF
+    |       -   getRule(EOF) - precedence field of rule is PREC_NONE.
+    |            exit while loop because PREC_TERM + 1 > PREC_NONE
+    -   getRule(EOF) - precedence field of rule is PREC_NONE.
+                 exit while loop because PREC_ASSIGNMENT > PREC_NONE
+

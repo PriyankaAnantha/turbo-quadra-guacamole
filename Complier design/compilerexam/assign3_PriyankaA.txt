@@ -1,0 +1,157 @@
+PRIYANKA A
+220200039
+SCDS 
+SEMESTER FOUR
+COMPILER DESIGN 
+ASSIGNMENT 3
+____________________________________________________________________________________________________________________________________________
+
+Q1. 
+Consider the following Lox program:
+
+fun sum(n) {
+    if (n <= 0) return 0;
+    return sum(n-1) + sum(n-1);
+}
+print sum(10); 
+
+a. What do you think the output will be?
+
+Solution--> 
+The function sum(n) calls itself twice for each call, effectively creating a binary tree of calls. This means sum(10) calls sum(9) twice, each of those calls sum(8) twice, and so on. The depth of this binary tree is 10, and at each depth, the number of calls doubles. At depth d, there are 2^d calls. At depth 10, there will be 2^10 = 1024 calls to sum(0), each returning 0. Hence, the total number of calls at the leaf level is 2^10 = 1024. Because sum(0) returns 0, all calls eventually propagate 0 back up the call tree. Thus, the output will be: 0
+
+
+
+b. How many calls to sum(0) would be made in the course of the above program?
+
+Solution-->
+As reasoned above, the number of calls to reach sum(0) is 2^10 = 1024.
+While sum(0)  itself is called twice. 
+
+
+
+c. Can you describe what the stack would look like just after the 1024th call to sum(0)?
+
+Solution-->
+Just after the 1024th call to sum(0), the stack will be filled with all the recursive calls that led to the final sum(0) calls. The general pattern will look like this:
+1. The deepest stack frame will be sum(0), returning 0.
+2. Above it will be sum(1), which is waiting for two sum(0) calls to return.
+3. Above those will be sum(2), waiting for two sum(1) calls to return.
+4. This pattern continues all the way up to the original sum(10) call at the top of the stack.
+So, the stack frames will resemble a sequence of nested sum(n) calls decrementing in n until sum(0).
+
+
+
+d. How do you fix the above program so that there is only one call to each recursive function?
+
+Solution-->
+To fix the program to have only one recursive call per function, change the function to use a different approach, such as a loop or an accumulator for the recursive calls:
+
+fun sum(n) {
+    if (n <= 0) return 0;
+    return 2 * sum(n - 1);
+}
+print sum(10);
+
+Or to make it more efficient:
+
+fun sum(n) {
+    var total = 0;
+    for (var i = 0; i < n; i = i + 1) {
+        total = total + 2;
+    }
+    return total;
+}
+print sum(10);
+
+
+____________________________________________________________________________________________________________________________________________
+
+Q2. 
+Consider the following Lox code. What are the values printed? Show the compiler's locals array after each variable is added and removed. Show the evolution of the stack. (You can write out the stack as a list, and the entries as [<variable name> : <value>]. If there are multiple variables with the same name but with different scope depth, write the variable as a0, a1 etc., where the number indicates the depth.)
+
+{
+    var a = 10;
+    var b = a + 2;
+    var c = a + b;
+    {
+        var a = 20;
+        var e = a + c;
+        print e;
+        {
+            var b = 3;
+            print e + b;
+        }
+        print e + b;
+        print a + c;
+    }
+    print a + c;
+}
+
+
+
+
+Solution-->
+
+Values printed:
+1. print e will print 20 + (10 + 12) = 42.
+2. print e + b inside the inner block will print 42 + 3 = 45.
+3. print e + b outside the inner block will print 42 + 12 = 54.
+4. print a + c inside the middle block will print 20 + (10 + 12) = 42.
+5. print a + c outside all blocks will print 10 + (10 + 12) = 32.
+
+Stack evolution:
+1. { } block opens: Stack is empty.
+2. var a = 10;: Stack: [a: 10]
+3. var b = a + 2;: Stack: [a: 10, b: 12]
+4. var c = a + b;: Stack: [a: 10, b: 12, c: 22]
+5. { } block opens within the first block.
+6. var a = 20;: Stack: [a0: 10, b: 12, c: 22, a1: 20]
+7. var e = a + c;: Stack: [a0: 10, b: 12, c: 22, a1: 20, e: 42]
+8. print e;: Outputs 42
+9. { } block opens within the second block.
+10. var b = 3;: Stack: [a0: 10, b0: 12, c: 22, a1: 20, e: 42, b1: 3]
+11. print e + b;: Outputs 45
+12. Inner { } block closes: Stack: [a0: 10, b0: 12, c: 22, a1: 20, e: 42]
+13. print e + b;: Outputs 54
+14. print a + c;: Outputs 42
+15. Middle { } block closes: Stack: [a: 10, b: 12, c: 22]
+16. print a + c;: Outputs 32
+17. Outer { } block closes: Stack is empty.
+
+Compiler's locals array evolution:
+- After var a = 10;: locals = [a0]
+- After var b = a + 2;: locals = [a0, b0]
+- After var c = a + b;: locals = [a0, b0, c0]
+- After var a = 20;: locals = [a0, b0, c0, a1]
+- After var e = a + c;: locals = [a0, b0, c0, a1, e0]
+- After var b = 3;: locals = [a0, b0, c0, a1, e0, b1]
+
+The locals array tracks variables in their respective scopes, increasing and decreasing as blocks open and close.
+
+
+
+
+____________________________________________________________________________________________________________________________________________
+refer the book crafting interpreters: 
+Consider the following Lox code. 
+
+
+{
+    var i = 0;
+    var b = 0;
+    var r = 0;
+    while (i< 100)
+    {
+        i = i+1;
+        r= r+b;
+        b= 1-b;
+    }
+ print i;
+ print r;
+
+}
+
+
+What are the values printed at the end?
+describe the evolution of the stack as the VM executes the bytecode correspoinding to the above program.

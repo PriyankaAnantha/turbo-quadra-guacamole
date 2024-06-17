@@ -1,0 +1,32 @@
+1. Consider the following Lox program:
+
+    fun sum(n) {
+        if (n <= 0) return 1;
+        return sum(n-1) + sum(n-1);
+    }
+    print sum(10);
+
+a. What do you think the output will be? 
+b. How many calls to sum(0) would be made in the course of the above program?
+c. Can you describe what the stack would look like just after the 1024th call to sum(0)? (No need to draw the whole stack, just write in words the general pattern.)
+d. How do you fix the above program so that there is only one call to each recursive function?
+
+2. Consider the following Lox code. What are the values printed? Show the compiler's locals array after each variable is added and removed. Show the evolution of the stack. (You can write out the stack as a list, and the entries as [<variable name> : <value>]. If there are multiple variables with the same name but with different scope depth, write the variable as a0, a1 etc., where the number indicates the depth.)
+
+    {
+        var a = 10;
+        var b = a + 2;
+        var c = a + b;
+        {
+            var a = 20;
+            var e = a + c;
+            print e;
+            {
+                var b = 3;
+                print e + b;
+            }
+            print e + b;
+            print a + c;
+        }
+        print a + c;
+    }
